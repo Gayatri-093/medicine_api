@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 style="text-align: center;">Medicine Data</h1>
+    <table id="medicineTable" border="1"> 
+        <thead>
+            <tr>
+                <th>Medicine Name</th>
+                <th>Medicine Salt</th>
+                <th>Medicine MFG</th>
+                <th>Medicine EXP</th>
+                <th>Medicine Usage</th>
+                <th>Medicine Best_time_to_take </th>
+                <th>Medicine Storing_Place</th>
+                <th>Medicine SideEffects</th>
+                <th>Medicine Strength</th>
+                <th> Medicine Dosage Form</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+
+
+        </tbody>
+    </table>
+
+    <script>
+        fetch('http://localhost:3300/medicinedata')
+        .then((res)=>res.json())
+        .then((data)=>{
+            console.log(data);
+            const tableBody=document.getElementById('tableBody');
+            data.forEach(medicine=>{
+                const row=document.createElement('tr');
+                row.innerHTML=`
+                <td> ${medicine.medicine_name}</td>
+                <td> ${medicine.medicine_salt}</td>
+                <td> ${medicine.medicine_mfg}</td>
+                <td> ${medicine.medicine_expiration}</td>
+                <td> ${medicine.medicine_usage}</td>
+                <td> ${medicine.best_time_to_take}</td>
+                <td> ${medicine.medicine_storing_place}</td>
+                <td> ${medicine.side_effects}</td>
+                <td> ${medicine.strength}</td>
+                <td> ${medicine.dosage_form}</td>
+                <td>
+                    <button onclick="editRow(this)">Edit</button>
+                    <button style="display:none;" onclick="saveRow(this)">Save</button>
+                    <button onclick="deleteRow('${medicine.medicine_name}')">Delete</button>
+                </td>
+                `;
+                tableBody.appendChild(row);
+            })
+        })
+        function editRow(button){
+            console.log('Edit button');
+            const row=button.parentNode.parentNode;
+            console.log(row);
+            const cells=row.querySelectorAll('td:not(:last-child)');
+            console.log(cells);
+            cells.forEach(cell=>{
+                const text=cell.innerHTML;
+                cell.innerHTML=`<input type="text" value="${text}">`;
+            })
+            const editbutton=row.querySelector('button:nth-child(1)');
+            const savebutton=row.querySelector('button:nth-child(2)');
+            editbutton.style.display="none";
+            savebutton.style.display="block";
+        }
+
+        async function saveRow (button){
+            const row=button.parentNode.parentNode;
+            console.log(row);
+            const cells=row.querySelectorAll('td:not(:last-child)');
+            const newData={};
+            cells.forEach((cell,index)=>{
+                const input=cell.querySelector('input');
+                newData[cell.cellIndex]=input.value;
+                cell.innerHTML=input.value;
+
+            })
+            const editbutton=row.querySelector('button:nth-child(1)');
+            const savebutton=row.querySelector('button:nth-child(2)');
+            editbutton.style.display="block";
+            savebutton.style.display="none";
+            try{
+                const response=await fetch(`http://localhost:3300/medicine/${row.cells[0].innerText}`,{
+                method:'PUT',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(newData)
+
+
+            });
+            const data =await response.json();
+
+
+            }
+            catch(e){
+                console.log(e);
+            }
+
+        }
+       const deleteRow=async(name)=>{
+        // e.preventDefault();
+        console.log(name);
+        try{
+            console.log('Delete button');
+            const response=await fetch(`http://localhost:3300/medicine/${name}`,{
+                method:'DELETE'
+            });
+            if(!response.ok){
+                throw new Error('Failed to delete medicine');
+            }
+            const data=await response.json();
+            console.log(data);
+            // console.log('Medicine Deleted',data);
+            location.reload();
+
+        }
+        catch(e){
+            console.error(e);
+        }
+        
+
+       }
+
+    </script>
+</body>
+</html>

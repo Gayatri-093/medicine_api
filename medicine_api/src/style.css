@@ -1,0 +1,46 @@
+table{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+thead{
+    padding: 5px;
+    font-size: 22px;
+}
+tr {
+    padding: 5px;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 20px;
+
+}
+
+/* th:hover{
+    background-color: gray;
+}
+td:hover{
+    background-color: gray;
+
+} */
+button{
+    padding: 5px;
+    font-size: 15px;
+    width: 60px;
+    margin: 5px;
+    
+}
+button:hover{
+    background-color: rgb(206, 201, 201);
+    color: white;
+}
+input{
+    border: none;
+    background-color: rgb(206, 201, 201);
+    padding: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 18px;
+    outline: none;
+    margin: 8px;
+}
+
